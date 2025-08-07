@@ -1,39 +1,99 @@
 // ✅ Import createStore from redux
-const { createStore } = require("redux")
+const { createStore, combineReducers } = require("redux")
 
 // ✅ Define Action Types (Constants)
-const ADD_USER = "addUser"
+//product
+const ADD_PRODUCT = "addProduct"
+const GET_PRODUCT = "getProduct"
+
+//Cart
+const ADD_CART = "addCart"
+const GET_CART = "getCart"
 
 // ✅ Initial State
-const initialValue = {
-    user: ["Anis"],
-    count: 1
+//product
+const initialProduct = {
+    products: ["table", "khata"],
+    productNumber: 2
+}
+
+//Cart
+const initialCart = {
+    carts: ["sugar", "chal", "dal"],
+    cartNumber: 3
 }
 
 // ✅ Action Creators (functions that return action objects)
-
-const addUser = (value) => {
+//product
+const addProduct = (product) => {
     return {
-        type: ADD_USER,
-        payload: value
+        type: ADD_PRODUCT,
+        payload: product
+    }
+}
+const getProduct = () => {
+    return {
+        type:GET_PRODUCT
+    }
+}
+
+//Cart
+const addCart = (cart) => {
+    return {
+        type: ADD_CART,
+        payload: cart
+    }
+}
+const getCart = () => {
+    return {
+        type:GET_CART
     }
 }
 
 // ✅ Reducer Function (pure function to handle state updates)
-const handleUserAddition = (state = initialValue, action) => {
+//product
+const handleProduct = (state = initialProduct, action) => {
     switch (action.type) {
-        case ADD_USER:
+        case ADD_PRODUCT:
             return {
-                user : [...state.user, action.payload],
-                count: state.count +1
+                product : [...state.products, action.payload],
+                productNumber: state.productNumber + 1
+            }
+        case GET_PRODUCT:
+            return {
+                ...state,
             }
         default:
             return state
     }
 }
 
+//product
+const handleCart = (state = initialCart, action) => {
+    switch (action.type) {
+        case ADD_CART:
+            return {
+                cart : [...state.carts, action.payload],
+                cartNumber: state.cartNumber + 1
+            }
+        case GET_CART:
+            return {
+                ...state,
+            }
+        default:
+            return state
+    }
+}
+
+//Combined Reducer(By which we can combined multiple reducer in a roor reducer)
+const rootReducer = combineReducers({
+    ProductR: handleProduct,
+    CartR: handleCart
+})
+
 // ✅ Create Redux Store with the reducer
-const store = createStore(handleUserAddition)
+const store = createStore(rootReducer)
+
 
 // ✅ Subscribe to store updates (log every time state changes)
 store.subscribe(() => {
@@ -41,5 +101,11 @@ store.subscribe(() => {
 })
 
 // ✅ Dispatch Actions to update the state
-store.dispatch(addUser("Subrata"))
-store.dispatch(addUser("Tania"))
+//product
+store.dispatch(getProduct())
+store.dispatch(addProduct("Pen"))
+
+//Cart
+store.dispatch(getCart())
+store.dispatch(addCart("Pen"))
+
