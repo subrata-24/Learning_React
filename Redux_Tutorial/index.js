@@ -35,4 +35,19 @@ const addUser = () => {
     };
 };
 
+const counterReducer = (state = initialValue, action) => {
+    switch (action.type) {
+        case INCREMENT:
+            return {
+                ...state,
+                count: state.counter +1,
+            }
+            
+            break;
+    
+        default:
+            break;
+    }
+}
+
 //Define State -> Define Action -> Perform Action by Reducer -> Update value
