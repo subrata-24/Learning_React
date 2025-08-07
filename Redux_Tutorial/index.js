@@ -2,65 +2,30 @@
 const { createStore } = require("redux")
 
 // ✅ Define Action Types (Constants)
-const INCREMENT = "INCREMENT"
-const DECREMENT = "DECREMENT"
-const RESET = "RESET"
-const INCREMENT_BY_VALUE = "incrementByValue"
+const ADD_USER = "addUser"
 
 // ✅ Initial State
 const initialValue = {
-    count: 0,
+    user: ["Anis"],
+    count: 1
 }
 
 // ✅ Action Creators (functions that return action objects)
-const increment = () => {
-    return {
-        type: INCREMENT
-    }
-}
 
-
-const incrementByValue = (value) => {
+const addUser = (value) => {
     return {
-        type: INCREMENT_BY_VALUE,
+        type: ADD_USER,
         payload: value
     }
 }
 
-const decrement = () => {
-    return {
-        type: DECREMENT
-    }
-}
-
-const reset = () => {
-    return {
-        type: RESET
-    }
-}
-
 // ✅ Reducer Function (pure function to handle state updates)
-const countReducer = (state = initialValue, action) => {
+const handleUserAddition = (state = initialValue, action) => {
     switch (action.type) {
-        case INCREMENT:
+        case ADD_USER:
             return {
-                ...state,
-                count: state.count + 1,
-            }
-        case DECREMENT:
-            return {
-                ...state,
-                count: state.count - 1,
-            }
-        case RESET:
-            return {
-                ...state,
-                count: 0,
-            }
-        case INCREMENT_BY_VALUE:
-            return {
-                ...state,
-                count: state.count + action.payload
+                user : [...state.user, action.payload],
+                count: state.count +1
             }
         default:
             return state
@@ -68,7 +33,7 @@ const countReducer = (state = initialValue, action) => {
 }
 
 // ✅ Create Redux Store with the reducer
-const store = createStore(countReducer)
+const store = createStore(handleUserAddition)
 
 // ✅ Subscribe to store updates (log every time state changes)
 store.subscribe(() => {
@@ -76,13 +41,5 @@ store.subscribe(() => {
 })
 
 // ✅ Dispatch Actions to update the state
-// store.dispatch(increment())
-// store.dispatch(increment())
-// store.dispatch(increment())
-// store.dispatch(decrement())
-// store.dispatch(reset())
-// store.dispatch(decrement())
-
-store.dispatch(incrementByValue(5))
-store.dispatch(incrementByValue(10))
-store.dispatch(incrementByValue(15))
+store.dispatch(addUser("Subrata"))
+store.dispatch(addUser("Tania"))
