@@ -1,27 +1,34 @@
-import React from "react";
-import { DECREMENT, INCREMENT, RESET } from "../constant/Constant";
-const initialValue = {count:0}
+import { GET_TODO_FAILED, GET_TODO_REQUEST, GET_TODO_SUCCESS } from "../constant/Constant";
 
-const handleReducer = (state=initialValue, action) => {
+const initialState = {
+    isLoading: false,
+    todo: [],
+    error: '',
+}
+
+const UseReducer = (state = initialState, action) => {
     switch (action.type) {
-        case INCREMENT:
+        case GET_TODO_REQUEST:
             return {
                 ...state,
-               count: state.count+1
-           }
-        case DECREMENT:
-            return {
-                ...state,
-               count: state.count - 1
+                isLoading: true,
             }
-        case RESET:
+        case GET_TODO_SUCCESS:
             return {
                 ...state,
-               count: 0
-           }
+                isLoading: false,
+                todo: action.payload,
+            }
+        case GET_TODO_FAILED:
+            return {
+                ...state,
+                isLoading: false,
+                error: action.payload
+            }
+    
         default:
-            return state
+            return state;
     }
 }
 
-export default handleReducer
+export default UseReducer;

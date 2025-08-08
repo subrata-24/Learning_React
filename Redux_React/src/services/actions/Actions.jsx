@@ -1,20 +1,22 @@
-import React from "react";
-import { DECREMENT, INCREMENT, RESET } from "../constant/Constant";
+import { API_URL, GET_TODO_FAILED, GET_TODO_REQUEST, GET_TODO_SUCCESS } from "../constant/Constant"
+import axios from 'axios'
 
-export const handleIncrement = () => {
-    return {
-        type:INCREMENT,
-    }
-}
 
-export const handleDecrement = () => {
-    return {
-        type:DECREMENT,
-    }
-}
+export const asyncActionCreator = () => {
+  return async (dispatch) => {
+    dispatch({ type: GET_TODO_REQUEST });
 
-export const handleReset = () => {
-    return {
-        type:RESET,
+    try {
+      const response = await axios.get(API_URL);
+      dispatch({
+        type: GET_TODO_SUCCESS,
+        payload: response.data,
+      });
+    } catch (error) {
+      dispatch({
+        type: GET_TODO_FAILED,
+        payload: error.message,
+      });
     }
-}
+  };
+};
