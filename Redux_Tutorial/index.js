@@ -1,66 +1,92 @@
-// ✅ Import createStore from redux
+const { default: axios } = require("axios")
 const { createStore, applyMiddleware } = require("redux")
-const { default: logger } = require("redux-logger")
+// const thunk = require("redux-thunk")
+// const  axios  = require("axios");
+const {thunk} = require("redux-thunk");
 
-// ✅ Define Action Types (Constants)
-//product
-const ADD_PRODUCT = "addProduct"
-const GET_PRODUCT = "getProduct"
 
-// ✅ Initial State
-//product
-const initialProduct = {
-    products: ["table", "khata"],
-    productNumber: 2
+//Constant
+const GET_TODO_REQUEST = "GET_TODO_REQUEST"
+const GET_TODO_SUCCESS = "GET_TODO_SUCCESS"
+const GET_TODO_FAILED = "GET_TODO_FAILED"
+const API_URL = "https://jsonplaceholder.typicode.com/todos"
+
+//State
+const initialState = {
+    todos: [],
+    isLoading: false,
+    error: '',
 }
 
-
-// ✅ Action Creators (functions that return action objects)
-//product
-const addProduct = (product) => {
+//Action
+const getRequest = () => {
     return {
-        type: ADD_PRODUCT,
-        payload: product
-    }
-}
-const getProduct = () => {
-    return {
-        type:GET_PRODUCT
+        type: GET_TODO_REQUEST,
     }
 }
 
+const getRequestSuccess = (todo) => {
+    return {
+        type: GET_TODO_SUCCESS,
+        payload: todo,
+    }
+}
 
-// ✅ Reducer Function (pure function to handle state updates)
-//product
-const handleProduct = (state = initialProduct, action) => {
+const getRequestFailed = (error) => {
+    return {
+        type: GET_TODO_FAILED,
+        payload: error,
+    }
+}
+
+//Reducer
+const todoReducer = (state=initialState, action) => {
     switch (action.type) {
-        case ADD_PRODUCT:
-            return {
-                product : [...state.products, action.payload],
-                productNumber: state.productNumber + 1
-            }
-        case GET_PRODUCT:
+        case GET_TODO_REQUEST:
             return {
                 ...state,
+                isLoading:true,
             }
+        case GET_TODO_SUCCESS:
+            return {
+                ...state,
+                todos: action.payload,
+                isLoading:false,
+            }
+        case GET_TODO_FAILED:
+            return {
+                ...state,
+                isLoading: false,
+                error:action.payload,
+            }
+    
         default:
-            return state
+            return state;
     }
 }
 
+//Fetch function
+const fetchTodo = () => {
+    return (dispatch) => {
+        dispatch(getRequest());
+        axios.get(API_URL)
+            .then((res) => {
+                const todos = res.data;
+                const title = todos.map((res) => res.title)
+                console.log(title)
+                dispatch(getRequestSuccess(title))
+            })
+            .catch((error) => {
+            dispatch(getRequestFailed(error.message))
+        })
+    }
+}
 
-// ✅ Create Redux Store with the reducer
-const store = createStore(handleProduct, applyMiddleware(logger))
+//Store
+const store = createStore(todoReducer, applyMiddleware(thunk))
 
-
-// ✅ Subscribe to store updates (log every time state changes)
-store.subscribe(() => {
+store.subscribe (() => {
     console.log(store.getState())
 })
 
-// ✅ Dispatch Actions to update the state
-//product
-store.dispatch(getProduct())
-store.dispatch(addProduct("Pen"))
-
-
+store.dispatch(fetchTodo())
