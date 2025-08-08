@@ -1,14 +1,11 @@
 // ✅ Import createStore from redux
-const { createStore, combineReducers } = require("redux")
+const { createStore, applyMiddleware } = require("redux")
+const { default: logger } = require("redux-logger")
 
 // ✅ Define Action Types (Constants)
 //product
 const ADD_PRODUCT = "addProduct"
 const GET_PRODUCT = "getProduct"
-
-//Cart
-const ADD_CART = "addCart"
-const GET_CART = "getCart"
 
 // ✅ Initial State
 //product
@@ -17,11 +14,6 @@ const initialProduct = {
     productNumber: 2
 }
 
-//Cart
-const initialCart = {
-    carts: ["sugar", "chal", "dal"],
-    cartNumber: 3
-}
 
 // ✅ Action Creators (functions that return action objects)
 //product
@@ -37,18 +29,6 @@ const getProduct = () => {
     }
 }
 
-//Cart
-const addCart = (cart) => {
-    return {
-        type: ADD_CART,
-        payload: cart
-    }
-}
-const getCart = () => {
-    return {
-        type:GET_CART
-    }
-}
 
 // ✅ Reducer Function (pure function to handle state updates)
 //product
@@ -68,31 +48,9 @@ const handleProduct = (state = initialProduct, action) => {
     }
 }
 
-//product
-const handleCart = (state = initialCart, action) => {
-    switch (action.type) {
-        case ADD_CART:
-            return {
-                cart : [...state.carts, action.payload],
-                cartNumber: state.cartNumber + 1
-            }
-        case GET_CART:
-            return {
-                ...state,
-            }
-        default:
-            return state
-    }
-}
-
-//Combined Reducer(By which we can combined multiple reducer in a roor reducer)
-const rootReducer = combineReducers({
-    ProductR: handleProduct,
-    CartR: handleCart
-})
 
 // ✅ Create Redux Store with the reducer
-const store = createStore(rootReducer)
+const store = createStore(handleProduct, applyMiddleware(logger))
 
 
 // ✅ Subscribe to store updates (log every time state changes)
@@ -105,7 +63,4 @@ store.subscribe(() => {
 store.dispatch(getProduct())
 store.dispatch(addProduct("Pen"))
 
-//Cart
-store.dispatch(getCart())
-store.dispatch(addCart("Pen"))
 
