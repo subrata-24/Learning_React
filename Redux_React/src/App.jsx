@@ -1,11 +1,13 @@
 import React from "react"
 import CounterView from "./features/counter/CounterView"
+import PostView from "./features/post/PostView"
 
 function App() {
 
   return (
     <div>
-      <CounterView/>
+      <CounterView />
+      <PostView/>
     </div>
   )
 }
